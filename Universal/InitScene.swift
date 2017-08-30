@@ -21,17 +21,17 @@ class InitScene: SKScene {
     // By abstracting out, it opens the door to easily add
     // interactions and platforms (e.g. such as OS/X mouse/keyboard)
     
-    func userInteractionBegan(location: CGPoint) {
+    func userInteractionBegan(_ location: CGPoint) {
         // Universal interaction began (touches, clicks, etc)
         // This method is a placeholder overridden by subclasses
     }
     
-    func userInteractionMoved(location: CGPoint) {
+    func userInteractionMoved(_ location: CGPoint) {
         // Universal interaction moved (touches, clicks, etc)
         // This method is a placeholder overridden by subclasses
     }
     
-    func userInteractionEnded(location: CGPoint) {
+    func userInteractionEnded(_ location: CGPoint) {
         // Universal interaction ended (touches, clicks, etc)
         // This method is a placeholder overridden by subclasses
     }

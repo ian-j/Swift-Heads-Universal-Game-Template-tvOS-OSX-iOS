@@ -15,8 +15,8 @@ class GameScene: InitScene {
     // *************************************************************
     
     enum GameState {
-        case Tutorial
-        case Play
+        case tutorial
+        case play
     }
     
     // *************************************************************
@@ -24,10 +24,10 @@ class GameScene: InitScene {
     // *************************************************************
     
     enum Layer: CGFloat {
-        case Background
-        case Ground
-        case Hero
-        case UI
+        case background
+        case ground
+        case hero
+        case ui
     }
     
     // *************************************************************
@@ -45,9 +45,9 @@ class GameScene: InitScene {
     // *************************************************************
     
     let kImpulse: CGFloat = 200.0
-    var dt: NSTimeInterval = 0
-    var lastUpdateTime: NSTimeInterval = 0
-    var gameState: GameState = .Tutorial
+    var dt: TimeInterval = 0
+    var lastUpdateTime: TimeInterval = 0
+    var gameState: GameState = .tutorial
     let worldNode = SKNode()
     
     // Demo Specific
@@ -64,7 +64,7 @@ class GameScene: InitScene {
     // MARK: - didMoveToView
     // *************************************************************
     
-    override func didMoveToView(view: SKView) {
+    override func didMove(to view: SKView) {
         setupScene()
     }
     
@@ -72,24 +72,24 @@ class GameScene: InitScene {
     // MARK: - User Interaction
     // *************************************************************
     
-    override func userInteractionBegan(location: CGPoint) {
+    override func userInteractionBegan(_ location: CGPoint) {
         
         switch gameState {
-        case .Tutorial:
+        case .tutorial:
             switchToPlayState()
             break
-        case .Play:
+        case .play:
             userTouching = true
             break
         }
         
     }
     
-    override func userInteractionMoved(location: CGPoint) {
+    override func userInteractionMoved(_ location: CGPoint) {
         // touch/mouse moved
     }
     
-    override func userInteractionEnded(location: CGPoint) {
+    override func userInteractionEnded(_ location: CGPoint) {
         userTouching = false
     }
     
@@ -98,7 +98,7 @@ class GameScene: InitScene {
     // ***********************************************
     
     // update method is called before each frame is rendered
-    override func update(currentTime: CFTimeInterval) {
+    override func update(_ currentTime: TimeInterval) {
         
         // Calculate delta time (dt) first
         if lastUpdateTime > 0 {
@@ -110,9 +110,9 @@ class GameScene: InitScene {
         
         // Determine update based on gameState
         switch gameState {
-        case .Tutorial:
+        case .tutorial:
             break
-        case .Play:
+        case .play:
             updateShip()
             break
         }
@@ -138,32 +138,32 @@ class GameScene: InitScene {
     }
     
     func setupWorld() {
-        self.physicsBody = SKPhysicsBody(edgeLoopFromRect: self.frame)
-        self.physicsWorld.gravity = CGVectorMake(0, -2.5);
+        self.physicsBody = SKPhysicsBody(edgeLoopFrom: self.frame)
+        self.physicsWorld.gravity = CGVector(dx: 0, dy: -2.5);
         addChild(worldNode)
     }
     
     func setupBackground() {
         let background = SKSpriteNode(imageNamed: "Background")
         background.position = CGPoint(x: size.width/2, y: size.height/2)
-        background.zPosition = Layer.Background.rawValue
+        background.zPosition = Layer.background.rawValue
         worldNode.addChild(background)
     }
     
     func setupStarParticle() {
-        if let path = NSBundle.mainBundle().pathForResource("StarParticle", ofType: "sks") {
-            let starParticle = NSKeyedUnarchiver.unarchiveObjectWithFile(path) as! SKEmitterNode
-            starParticle.position = CGPointMake(self.size.width/2, self.size.height/2)
-            starParticle.zPosition = Layer.Ground.rawValue
+        if let path = Bundle.main.path(forResource: "StarParticle", ofType: "sks") {
+            let starParticle = NSKeyedUnarchiver.unarchiveObject(withFile: path) as! SKEmitterNode
+            starParticle.position = CGPoint(x: self.size.width/2, y: self.size.height/2)
+            starParticle.zPosition = Layer.ground.rawValue
             worldNode.addChild(starParticle)
         }
     }
     
     func setupJetParticle() {
-        if let path = NSBundle.mainBundle().pathForResource("JetParticle", ofType: "sks") {
-            jetParticle = NSKeyedUnarchiver.unarchiveObjectWithFile(path) as! SKEmitterNode
-            jetParticle.position = CGPointMake(0, -ship.frame.size.height)
-            jetParticle.zPosition = Layer.Hero.rawValue
+        if let path = Bundle.main.path(forResource: "JetParticle", ofType: "sks") {
+            jetParticle = NSKeyedUnarchiver.unarchiveObject(withFile: path) as! SKEmitterNode
+            jetParticle.position = CGPoint(x: 0, y: -ship.frame.size.height)
+            jetParticle.zPosition = Layer.hero.rawValue
             jetParticle.particleBirthRate = 50
             ship.addChild(jetParticle)
         }
@@ -171,12 +171,12 @@ class GameScene: InitScene {
     
     func setupGround() {
         let ground = SKSpriteNode(imageNamed: "Ground2")
-        ground.zPosition = Layer.Ground.rawValue
+        ground.zPosition = Layer.ground.rawValue
         ground.position = CGPoint(x: size.width/2, y: ground.frame.height/4)
         
         // Add physics body for ground
-        ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
-        ground.physicsBody?.dynamic = false
+        ground.physicsBody = SKPhysicsBody(rectangleOf: ground.size)
+        ground.physicsBody?.isDynamic = false
         ground.physicsBody?.categoryBitMask = PhysicsCategory.Ground
         ground.physicsBody?.collisionBitMask = PhysicsCategory.Hero
         worldNode.addChild(ground)
@@ -185,23 +185,23 @@ class GameScene: InitScene {
     func setupHero() {
         ship.xScale = 0.5
         ship.yScale = 0.5
-        ship.zPosition = Layer.Hero.rawValue
+        ship.zPosition = Layer.hero.rawValue
         ship.position = CGPoint(x: size.width/2, y: self.frame.height * 0.4)
         
         // Add physics body for Ship
-        ship.physicsBody = SKPhysicsBody(rectangleOfSize: ship.size)
+        ship.physicsBody = SKPhysicsBody(rectangleOf: ship.size)
         ship.physicsBody?.categoryBitMask = PhysicsCategory.Hero
         ship.physicsBody?.collisionBitMask = PhysicsCategory.Ground
         
         // Ship starts out non-dynamic until Play starts
-        ship.physicsBody?.dynamic = false
+        ship.physicsBody?.isDynamic = false
         
         worldNode.addChild(ship)
     }
     
     func setupTutorial() {
         let label = SKLabelNode(fontNamed:"AvenirNext-Regular ")
-        label.zPosition = Layer.UI.rawValue
+        label.zPosition = Layer.ui.rawValue
         label.text = "Ready, Player One!"
         label.fontSize = 36
         label.position = CGPoint(x: size.width/2, y: size.height * 0.6)
@@ -209,7 +209,7 @@ class GameScene: InitScene {
         worldNode.addChild(label)
         
         let label2 = SKLabelNode(fontNamed:"AvenirNext-Regular ")
-        label2.zPosition = Layer.UI.rawValue
+        label2.zPosition = Layer.ui.rawValue
         label2.text = "Tap or click to begin"
         label2.fontSize = 18
         label2.position = CGPoint(x: size.width/2, y: size.height * 0.55)
@@ -227,8 +227,8 @@ class GameScene: InitScene {
     
     func fireThrusters() {
         // Apply impulse
-        ship.physicsBody?.velocity = CGVectorMake(0, kImpulse/2)
-        ship.physicsBody?.applyImpulse(CGVectorMake(0, kImpulse))
+        ship.physicsBody?.velocity = CGVector(dx: 0, dy: kImpulse/2)
+        ship.physicsBody?.applyImpulse(CGVector(dx: 0, dy: kImpulse))
         
         // Show Jet Stream, zero means infinite particles
         jetParticle.numParticlesToEmit = 0
@@ -257,7 +257,7 @@ class GameScene: InitScene {
         print("Background music: \(backgroundSongs[randomSong])")
     }
     
-    func playBackgroundMusic(songName: String) {
+    func playBackgroundMusic(_ songName: String) {
         sktAudio.playBackgroundMusic(songName)
     }
     
@@ -267,25 +267,25 @@ class GameScene: InitScene {
     
     func switchToPlayState() {
         // switch gameState
-        gameState = .Play
+        gameState = .play
         
         // Play game start sound & music
-        runAction(coinDropSound)
+        run(coinDropSound)
         if musicOn {
             playRandomBackgroundMusic()
         }
         
         // Make ship dynamic
-        ship.physicsBody?.dynamic = true
+        ship.physicsBody?.isDynamic = true
 
         // Setup particles
         setupStarParticle()
         jetParticle.particleBirthRate = 450
         
         // Remove Tutorial text
-        worldNode.enumerateChildNodesWithName("Tutorial", usingBlock: { node, stop in
-            node.runAction(SKAction.sequence([
-                SKAction.fadeOutWithDuration(0.5),
+        worldNode.enumerateChildNodes(withName: "Tutorial", using: { node, stop in
+            node.run(SKAction.sequence([
+                SKAction.fadeOut(withDuration: 0.5),
                 SKAction.removeFromParent()
                 ]))
         })

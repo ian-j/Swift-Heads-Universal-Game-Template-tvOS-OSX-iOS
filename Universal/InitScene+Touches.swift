@@ -18,23 +18,23 @@ extension InitScene {
     // Note: There isn't screen-relative position associated with a touch in tvOS.
     // tvOS always returns the center point of the view as the touchPoint location
     
-    override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            let touchPoint = touch.locationInNode(self)
+            let touchPoint = touch.location(in: self)
             userInteractionBegan(touchPoint)
         }
     }
     
-    override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            let touchPoint = touch.locationInNode(self)
+            let touchPoint = touch.location(in: self)
             userInteractionMoved(touchPoint)
         }
     }
     
-    override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         for touch in touches {
-            let touchPoint = touch.locationInNode(self)
+            let touchPoint = touch.location(in: self)
             userInteractionEnded(touchPoint)
         }
     }
